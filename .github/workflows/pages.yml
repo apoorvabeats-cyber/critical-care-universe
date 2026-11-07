@@ -1,0 +1,56 @@
+name: Publish
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Enable Pages on main
+        id: branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set +e
+          echo "Create Pages site from main /"
+          gh api --method POST -i repos/${{ github.repository }}/pages -H "Accept: application/vnd.github+json" --input - <<'JSON'
+          {"source":{"branch":"main","path":"/"}}
+          JSON
+          echo
+          url=$(gh api repos/${{ github.repository }}/pages --jq .html_url 2>/dev/null)
+          if [ -n "$url" ]; then
+            echo "ok=yes" >> "$GITHUB_OUTPUT"
+            echo "Pages is on: $url"
+            gh api --method POST repos/${{ github.repository }}/pages/builds || true
+          else
+            echo "ok=no" >> "$GITHUB_OUTPUT"
+            echo "Branch Pages was not created. Trying Actions deploy."
+          fi
+      - uses: actions/checkout@v4
+        if: steps.branch.outputs.ok != 'yes'
+      - name: Prepare site
+        if: steps.branch.outputs.ok != 'yes'
+        run: |
+          mkdir -p _site
+          cp -a index.html universe.css assets universe .nojekyll _site/
+      - uses: actions/configure-pages@v5
+        if: steps.branch.outputs.ok != 'yes'
+      - uses: actions/upload-pages-artifact@v3
+        if: steps.branch.outputs.ok != 'yes'
+        with:
+          path: _site
+      - name: Deploy
+        id: deployment
+        if: steps.branch.outputs.ok != 'yes'
+        uses: actions/deploy-pages@v4
