@@ -3,7 +3,7 @@ import * as THREE from "three";
 import { unlockBedsideAudio } from "@/components/bedside/audio";
 import { asset } from "@/components/universe/patients";
 import { CriticalCareUniverse } from "@/components/universe/ward";
-import { loadUpdates, type UpdateItem } from "@/components/universe/updates";
+import { loadUpdates, PILLARS, type UpdateItem } from "@/components/universe/live-feed";
 
 const HUB = "https://apoorvabeats-cyber.github.io/ARDS-INTERACTIVE-SIMULATOR/";
 
@@ -86,44 +86,6 @@ function scoreNudge() {
   }
   void scoreFor("lobby");
 }
-
-const FALLBACK: UpdateItem[] = [
-  {
-    title: "Surviving Sepsis Campaign",
-    detail: "International guidance for sepsis and septic shock",
-    href: "https://www.sccm.org/SurvivingSepsisCampaign/Guidelines",
-    when: "Guideline",
-    fresh: false,
-  },
-  {
-    title: "KDIGO acute kidney injury",
-    detail: "Prevention, staging, and renal replacement",
-    href: "https://kdigo.org/guidelines/acute-kidney-injury/",
-    when: "Guideline",
-    fresh: false,
-  },
-  {
-    title: "ARDS lung-protective ventilation",
-    detail: "Low tidal volume and pressure limitation",
-    href: "https://pubmed.ncbi.nlm.nih.gov/10793162/",
-    when: "Landmark",
-    fresh: false,
-  },
-  {
-    title: "IDSA antimicrobial stewardship",
-    detail: "Using the right drug, for the right duration",
-    href: "https://www.idsociety.org/practice-guideline/antimicrobial-stewardship/",
-    when: "Guideline",
-    fresh: false,
-  },
-  {
-    title: "ESICM haemodynamic monitoring",
-    detail: "Bedside assessment of shock and fluid",
-    href: "https://www.esicm.org/resources/guidelines/",
-    when: "Guidance",
-    fresh: false,
-  },
-];
 
 type Bay = "home" | "command" | "team" | "custom";
 
@@ -525,12 +487,9 @@ function GateFeed({ items }: { items: UpdateItem[] }) {
           <RowIcon kind={iconFor(item.title)} />
         </i>
         <span>
-          <b>{item.fresh ? "PubMed" : item.when}</b>
+          <b data-hot={item.breaking ? "1" : "0"}>{item.breaking ? "New" : item.lane || item.when}</b>
           <strong>{item.title}</strong>
-          <em>
-            {item.detail}
-            {item.fresh ? ` · ${item.when}` : ""}
-          </em>
+          <em>{[item.breaking ? item.lane : "", item.topic, item.detail, item.fresh ? item.when : ""].filter(Boolean).join(" · ")}</em>
         </span>
       </a>
     ));
@@ -549,7 +508,7 @@ function GateFeed({ items }: { items: UpdateItem[] }) {
 }
 
 function Home({ onCommand }: { onCommand: () => void }) {
-  const [items, setItems] = useState<UpdateItem[]>(FALLBACK);
+  const [items, setItems] = useState<UpdateItem[]>(PILLARS);
   const [bay, setBay] = useState<"home" | "team" | "custom">("home");
   const [slide, setSlide] = useState(0);
   const [sheet, setSheet] = useState<"settings" | "more" | null>(null);
@@ -563,12 +522,13 @@ function Home({ onCommand }: { onCommand: () => void }) {
     const pull = () => {
       loadUpdates()
         .then((next) => {
-          if (!stop && next?.length) setItems(next);
+          if (stop || !next?.length) return;
+          setItems(next);
         })
         .catch(() => undefined);
     };
     pull();
-    const timer = window.setInterval(pull, 3 * 60 * 1000);
+    const timer = window.setInterval(pull, 30 * 60 * 1000);
     return () => {
       stop = true;
       window.clearInterval(timer);

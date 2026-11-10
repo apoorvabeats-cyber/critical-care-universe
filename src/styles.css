@@ -1341,11 +1341,14 @@
   margin: 0 0.35cqw 0 0;
   padding: 0.05cqw 0.35cqw;
   border-radius: 0.3cqw;
-  background: #e11d48;
+  background: #123044;
   color: #fff;
   font-size: 0.62cqw;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+.v-gatefeed b[data-hot="1"] {
+  background: #e11d48;
 }
 .v-gatefeed strong {
   display: block;
