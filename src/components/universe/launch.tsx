@@ -33,7 +33,7 @@ function scoreElement() {
     const el = new Audio();
     el.loop = true;
     el.preload = "auto";
-    el.playsInline = true;
+    el.setAttribute("playsinline", "true");
     el.volume = 0.48;
     el.setAttribute("data-score-el", "1");
     document.body.appendChild(el);
@@ -724,7 +724,7 @@ function Home({ onCommand }: { onCommand: () => void }) {
                       scoreEnabled = next;
                       setMusic(next);
                       if (!next) scorePause();
-                      else void scoreFor(bay === "team" ? "team" : "lobby");
+                      else void scoreFor("lobby");
                     }}
                   >
                     Music {music ? "on" : "off"}
