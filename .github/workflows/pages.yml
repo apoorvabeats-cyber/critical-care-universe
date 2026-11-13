@@ -7,6 +7,7 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  administration: write
 concurrency:
   group: pages
   cancel-in-progress: true
@@ -49,6 +50,8 @@ jobs:
           cp -a index.html universe.css assets universe .nojekyll _site/
       - uses: actions/configure-pages@v5
         if: steps.branch.outputs.ok != 'yes'
+        with:
+          enablement: true
       - uses: actions/upload-pages-artifact@v3
         if: steps.branch.outputs.ok != 'yes'
         with:
