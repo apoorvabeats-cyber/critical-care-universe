@@ -28,15 +28,18 @@ jobs:
           {"source":{"branch":"main","path":"/"}}
           JSON
           echo
-          url=$(gh api repos/${{ github.repository }}/pages --jq .html_url 2>/dev/null)
-          if [ -n "$url" ]; then
-            echo "ok=yes" >> "$GITHUB_OUTPUT"
-            echo "Pages is on: $url"
-            gh api --method POST repos/${{ github.repository }}/pages/builds || true
-          else
-            echo "ok=no" >> "$GITHUB_OUTPUT"
-            echo "Branch Pages was not created. Trying Actions deploy."
-          fi
+          url=$(gh api repos/${{ github.repository }}/pages --jq .html_url 2>/dev/null || true)
+          case "$url" in
+            https://*)
+              echo "ok=yes" >> "$GITHUB_OUTPUT"
+              echo "Pages is on: $url"
+              gh api --method POST repos/${{ github.repository }}/pages/builds || true
+              ;;
+            *)
+              echo "ok=no" >> "$GITHUB_OUTPUT"
+              echo "Branch Pages was not created. Trying Actions deploy."
+              ;;
+          esac
       - uses: actions/checkout@v4
         if: steps.branch.outputs.ok != 'yes'
       - name: Prepare site
