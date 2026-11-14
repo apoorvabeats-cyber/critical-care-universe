@@ -275,13 +275,13 @@ function activeDrugs(p){
 function drawGiven(c,p,W,H){
  var bags=activeDrugs(p); if(!bags.length) return;
  bags.forEach(function(name,n){
-  var x=W*(0.34+n*0.07), y=H*0.05;
-  c.fillStyle='rgba(8,18,32,.88)'; c.fillRect(x,y,W*0.06,H*0.16);
-  c.strokeStyle='#9fd0ff'; c.strokeRect(x,y,W*0.06,H*0.16);
-  c.fillStyle='#d8ecff'; c.font='9px system-ui'; c.textAlign='center';
-  c.fillText(name.slice(0,8), x+W*0.03, y+H*0.09);
+  var x=W*(0.34+n*0.085), y=H*0.05, bw=W*0.075, bh=H*0.19;
+  c.fillStyle='rgba(8,18,32,.88)'; c.fillRect(x,y,bw,bh);
+  c.strokeStyle='#9fd0ff'; c.strokeRect(x,y,bw,bh);
+  c.fillStyle='#d8ecff'; c.font='10px system-ui'; c.textAlign='center';
+  c.fillText(name.slice(0,8), x+bw/2, y+H*0.105);
   var f=(performance.now()%1100)/1100;
-  c.fillStyle='rgba(191,227,255,.95)'; c.beginPath(); c.arc(x+W*0.03, y+H*(0.2+0.08*f), 2.2, 0, 7); c.fill();
+  c.fillStyle='rgba(191,227,255,.95)'; c.beginPath(); c.arc(x+bw/2, y+H*(0.24+0.09*f), 2.8, 0, 7); c.fill();
  });
 }
 var SHOT={};
