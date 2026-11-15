@@ -16,6 +16,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./assets/startup.css" />
+    <link rel="modulepreload" href="./assets/app.js" />
     <script defer src="./assets/startup.js"></script>
   </head>
   <body>
@@ -30,7 +31,8 @@
           </g>
         </svg>
         <p>Critical Care Universe</p>
-        <button class="startup-music" type="button" hidden>Tap to enable music</button>
+        <button class="startup-music" type="button" hidden>Tap to start music and intro</button>
+        <button class="startup-skip" type="button" hidden>Continue to app without intro</button>
         <p class="startup-music-error" role="status" hidden></p>
       </div>
     </div>
