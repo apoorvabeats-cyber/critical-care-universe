@@ -14,18 +14,22 @@
   </head>
   <body>
     <div class="startup" id="startup" role="status" aria-label="Critical Care Universe is starting">
-      <div class="startup-logo" aria-hidden="true">
-        <svg viewBox="0 0 240 240" fill="none">
-          <path class="startup-c startup-c-left" d="M108 87 A32 32 0 1 0 108 153" />
-          <path class="startup-c startup-c-right" d="M132 87 A32 32 0 1 1 132 153" />
-          <path class="startup-u" d="M57 69 V129 C57 170 82 192 120 192 C158 192 183 170 183 129 V69" />
-          <path class="startup-circle" pathLength="1" d="M120 15 A105 105 0 1 0 119.99 15" />
+      <div class="startup-logo">
+        <svg viewBox="0 0 240 240" fill="none" aria-hidden="true">
+          <path class="startup-circle" pathLength="1" d="M120 15 A105 105 0 1 0 120 225 A105 105 0 1 0 120 15" />
+          <g transform="translate(0 -10)">
+            <path class="startup-c startup-c-left" d="M108 87 A32 32 0 1 0 108 153" />
+            <path class="startup-c startup-c-right" d="M132 87 A32 32 0 1 1 132 153" />
+            <path class="startup-u" d="M57 69 V129 C57 170 82 192 120 192 C158 192 183 170 183 129 V69" />
+          </g>
         </svg>
         <p>Critical Care Universe</p>
+        <button class="startup-music" type="button" hidden>Tap to enable music</button>
+        <p class="startup-music-error" role="status" hidden></p>
       </div>
     </div>
     <noscript><p class="startup-noscript">JavaScript is required to start Critical Care Universe.</p></noscript>
-    <audio data-score-el="1" autoplay loop playsinline preload="none" data-startup-src="universe/theme.mp3"></audio>
+    <audio data-score-el="1" autoplay loop playsinline preload="auto" src="universe/theme.mp3"></audio>
     <div id="app"></div>
   </body>
 </html>
